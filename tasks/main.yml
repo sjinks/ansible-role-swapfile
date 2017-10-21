@@ -1,0 +1,4 @@
+---
+- name: Create swap
+  include_tasks: swap.yml
+  when: (ansible_virtualization_type != 'lxc') and (swapfile_size_mib|int > 0) and (swapfile_path|string != '')

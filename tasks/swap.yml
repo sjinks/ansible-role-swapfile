@@ -1,0 +1,49 @@
+- name: Create swap file
+  become: yes
+  command:
+    {% if swapfile_use_dd %}
+    dd if=/dev/zero of={{ swapfile_path }} count={{ swapfile_size_mb }} bs=1MiB
+    {% else %}
+    fallocate -l {{ swapfile_size_mib }}M {{ swapfile_path }}
+    {% endif %}
+  args:
+    creates: "{{ swapfile_path }}"
+  register: swapfile_created
+
+- name: Set permissions on swap file
+  become: yes
+  file: path="{{ swapfile_path }}" mode=0600 owner=root group=root
+
+- name: Enable swap file
+  become: yes
+  block:
+    - name: Format swap file
+      command: mkswap "{{ swapfile_path }}"
+    - name: Turn on swap file
+      command: swapon {{ swapfile_path|quote }}
+  when: swapfile_created.changed
+
+- name: Add swap file to /etc/fstab
+  become: yes
+  lineinfile:
+    dest: /etc/fstab
+    line: "{{ swapfile_path }} none swap sw 0 0"
+    state: present
+
+- name: Set vm.swappiness
+  sysctl:
+    name: vm.swappiness
+    value: {{ swapfile_swappiness|int }}
+    sysctl_set: yes
+    state: present
+    reload: yes
+  when: swapfile_swappiness != False
+
+- name: Set vm.vfs_cache_pressure
+  sysctl:
+    name: vm.vfs_cache_pressure
+    value: {{ swapfile_vfs_cache_pressure|int }}
+    sysctl_set: yes
+    state: present
+    reload: yes
+  when: swapfile_vfs_cache_pressure != False

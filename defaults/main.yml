@@ -1,0 +1,6 @@
+---
+swapfile_path: "/swapfile"
+swapfile_size_mib: 0
+swapfile_use_dd: False
+swapfile_swappiness: False
+swapfile_vfs_cache_pressure: False
