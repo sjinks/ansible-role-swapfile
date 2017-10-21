@@ -1,5 +1,7 @@
 # Ansible Role: Swapfile
 
+[![Build Status](https://travis-ci.org/sjinks/ansible-role-swapfile.svg?branch=master)](https://travis-ci.org/sjinks/ansible-role-swapfile)
+
 This role configures a swapfile.
 
 ## Requirements
