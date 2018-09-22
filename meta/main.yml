@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: swapfile
   author: Volodymyr Kolesnykov
   description: Swapfile role
   license: MIT
